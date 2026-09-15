@@ -18,7 +18,7 @@
     align-items: center; justify-content: center;
   }
   .screen { display: none; }
-  .screen.on { display: flex; flex-direction: column; }
+  .screen.on { display: flex !important; flex-direction: column; }
 
   /* =========== SHARED =========== */
   .panel {
@@ -196,7 +196,6 @@
   .rateRow .pct { opacity: 0.75; font-weight: 700; }
   .gachaBtns { display: flex; gap: 12px; }
 
-  /* Gacha result overlay */
   #gachaResult {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.85);
@@ -214,13 +213,8 @@
     min-width: 340px;
     transform: scale(0.85);
     transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
-    animation: pulseGlow 2s infinite ease-in-out;
   }
   #gachaResult.show .card { transform: scale(1); }
-  @keyframes pulseGlow {
-    0%,100% { box-shadow: 0 40px 100px rgba(0,0,0,0.8); }
-    50% { box-shadow: 0 40px 100px rgba(0,0,0,0.8), 0 0 60px rgba(74,222,128,0.3); }
-  }
   .gachaIcon { font-size: 72px; margin-bottom: 14px; line-height: 1; }
   .gachaName { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
   .gachaRar {
@@ -245,8 +239,8 @@
   #collection .shopGrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 
   /* =========== GAME SCREEN =========== */
-  #gameScreen { display: none; flex-direction: column; align-items: center; gap: 12px; }
-  #topbar { display: flex; width: 980px; gap: 12px; align-items: center; }
+  #gameScreen { flex-direction: column; align-items: center; gap: 12px; }
+  #topbar { display: flex; width: 1000px; gap: 12px; align-items: center; }
   .pl {
     flex: 1; display: flex; align-items: center; gap: 12px;
     padding: 10px 18px; border-radius: 14px;
@@ -436,7 +430,7 @@
 <body>
 
 <!-- =========== MAIN MENU =========== -->
-<div id="mainMenu" class="screen on" style="align-items:center; justify-content:center;">
+<div id="mainMenu" class="screen on">
   <div class="panel">
     <div class="title">🎱 8-Ball Pool HD</div>
     <div class="subtitle">Realistis · Trick · Gacha</div>
@@ -449,7 +443,7 @@
 </div>
 
 <!-- =========== BOT SELECT =========== -->
-<div id="botSelect" class="screen" style="align-items:center; justify-content:center;">
+<div id="botSelect" class="screen">
   <div class="panel" style="width:520px;">
     <button class="backBtn" onclick="showScreen('mainMenu')">← Kembali</button>
     <div class="title" style="font-size:26px;">Pilih Lawan</div>
@@ -485,7 +479,7 @@
 </div>
 
 <!-- =========== SHOP =========== -->
-<div id="shop" class="screen" style="align-items:center; justify-content:center;">
+<div id="shop" class="screen">
   <div class="panel">
     <button class="backBtn" onclick="showScreen('mainMenu')">← Kembali</button>
     <div class="title" style="font-size:26px;">🛒 Toko Cue</div>
@@ -496,7 +490,7 @@
 </div>
 
 <!-- =========== GACHA =========== -->
-<div id="gacha" class="screen" style="align-items:center; justify-content:center;">
+<div id="gacha" class="screen">
   <div class="panel">
     <button class="backBtn" onclick="showScreen('mainMenu')">← Kembali</button>
     <div class="title" style="font-size:26px;">🎰 Gacha Cue</div>
@@ -534,7 +528,7 @@
 </div>
 
 <!-- =========== COLLECTION =========== -->
-<div id="collection" class="screen" style="align-items:center; justify-content:center;">
+<div id="collection" class="screen">
   <div class="panel">
     <button class="backBtn" onclick="showScreen('mainMenu')">← Kembali</button>
     <div class="title" style="font-size:26px;">🎒 Koleksi Cue</div>
@@ -691,7 +685,6 @@ const CUES = {
     rarity: 'legendary', price: 6500, colors: ['#ff3a3a', '#5a0a0a'],
     power: 1.34, spin: 1.52, aim: 1.42
   },
-  // ==== Gacha only ====
   ash: {
     id: 'ash', name: 'Ash Wood', icon: '🍂',
     rarity: 'common', price: -1, colors: ['#a89880', '#5a4a30'],
@@ -760,7 +753,7 @@ const RARITY_LABEL = {
 };
 
 // ============================================================
-// STORAGE (localStorage)
+// STORAGE
 // ============================================================
 const SAVE_KEY = 'biliard_hd_save_v1';
 let save = {
@@ -804,13 +797,11 @@ function showScreen(id) {
   if (el) el.classList.add('on');
   if (id === 'shop') renderShop();
   if (id === 'collection') renderCollection();
-  if (id === 'gacha') updateCoinDisplays();
-  if (id === 'mainMenu') updateCoinDisplays();
   updateCoinDisplays();
 }
 
 // ============================================================
-// SHOP RENDER
+// SHOP
 // ============================================================
 function renderShop() {
   const grid = document.getElementById('shopGrid');
@@ -862,7 +853,7 @@ function selectCue(id) {
 }
 
 // ============================================================
-// COLLECTION RENDER
+// COLLECTION
 // ============================================================
 function renderCollection() {
   const grid = document.getElementById('collectionGrid');
@@ -871,7 +862,7 @@ function renderCollection() {
     const cue = CUES[id];
     const isActive = save.selected === id;
     const card = document.createElement('div');
-    card.className = 'cueCard' + (isActive ? '' : '');
+    card.className = 'cueCard';
     card.style.borderColor = isActive ? '#4ade80' : '';
     card.style.boxShadow = isActive ? '0 0 0 1px rgba(74,222,128,0.5), 0 10px 30px rgba(74,222,128,0.15)' : '';
     card.innerHTML = `
@@ -899,10 +890,7 @@ function renderCollection() {
 // ============================================================
 function rollRarity() {
   const r = Math.random();
-  let acc = 0;
-  const order = ['mythic', 'legendary', 'epic', 'rare', 'common']; // dari terkecil chance biar gampang
-  // Actually: cek dari yang paling langka
-  acc = GACHA_RATES.mythic;
+  let acc = GACHA_RATES.mythic;
   if (r < acc) return 'mythic';
   acc += GACHA_RATES.legendary;
   if (r < acc) return 'legendary';
@@ -929,7 +917,6 @@ function doGacha(count) {
   for (let i = 0; i < count; i++) {
     results.push(rollCue());
   }
-  // Process
   let newCues = [];
   let dupeCoins = 0;
   for (const id of results) {
@@ -937,7 +924,6 @@ function doGacha(count) {
       save.owned.push(id);
       newCues.push(id);
     } else {
-      // Duplicate → refund koin
       const cue = CUES[id];
       const refund = cue.rarity === 'mythic' ? 400
                    : cue.rarity === 'legendary' ? 250
@@ -950,8 +936,6 @@ function doGacha(count) {
   persist();
   updateCoinDisplays();
 
-  // Show last (best) result
-  // Sort by rarity priority to show best
   const rarityRank = { mythic: 5, legendary: 4, epic: 3, rare: 2, common: 1 };
   const sorted = [...results].sort((a, b) => rarityRank[CUES[b].rarity] - rarityRank[CUES[a].rarity]);
   showGachaResult(sorted[0], newCues.length, dupeCoins, count);
@@ -967,7 +951,6 @@ function showGachaResult(cueId, newCount, dupeCoins, totalPulls) {
   document.getElementById('gPow').textContent = cue.power.toFixed(2) + '×';
   document.getElementById('gSpn').textContent = cue.spin.toFixed(2) + '×';
   document.getElementById('gAim').textContent = cue.aim.toFixed(2) + '×';
-
   document.getElementById('gachaResult').classList.add('show');
 }
 
@@ -991,8 +974,7 @@ let botLevel = 'dunia';
 let botVisual = { angle: 0, power: 0, show: false, trickName: null };
 let feltPattern = null;
 let botScheduled = false;
-let spinX = 0, spinY = 0;  // -1 to 1
-let prevCueVx = 0, prevCueVy = 0;
+let spinX = 0, spinY = 0;
 let foulCount = 0;
 
 // ============================================================
@@ -1050,7 +1032,6 @@ function stepPhysics(dt) {
     if (b.pocketed) continue;
     b.x += b.vx * dt;
     b.y += b.vy * dt;
-    // Apply sidespin curve (subtle)
     if (b.isCue && Math.abs(b.spinX) > 0.05) {
       const speed = Math.hypot(b.vx, b.vy);
       if (speed > 0.5) {
@@ -1061,7 +1042,6 @@ function stepPhysics(dt) {
       }
     }
     b.vx *= f; b.vy *= f;
-    // Spin decay
     b.spinX *= Math.pow(0.96, dt);
     b.spinY *= Math.pow(0.96, dt);
     if (Math.abs(b.vx) < MIN_V) b.vx = 0;
@@ -1100,7 +1080,6 @@ function stepPhysics(dt) {
     if (b.y + BALL_R > TABLE_B) { b.y = TABLE_B - BALL_R; b.vy = -b.vy * WALL_BOUNCE; bounced = true; }
 
     if (bounced && Math.abs(b.spinX) > 0.05) {
-      // sidespin nambah kecepatan tangensial
       const speed = Math.hypot(b.vx, b.vy);
       if (speed > 0.5) {
         const perpX = -b.vy / speed;
@@ -1132,15 +1111,11 @@ function collideBalls(a, b) {
   a.vx += vn * nx; a.vy += vn * ny;
   b.vx -= vn * nx; b.vy -= vn * ny;
 
-  // Apply spin effect on collision (only for cue)
   if (a.isCue && Math.abs(a.spinY) > 0.05) {
-    // spinY positif = topspin (cue maju terus), negatif = backspin (cue mundur)
-    const magnitude = Math.hypot(a.spinY) * 4;
     a.vx += nx * a.spinY * 4;
     a.vy += ny * a.spinY * 4;
     a.spinY *= 0.3;
   } else if (b.isCue && Math.abs(b.spinY) > 0.05) {
-    const magnitude = Math.hypot(b.spinY) * 4;
     b.vx += nx * b.spinY * 4;
     b.vy += ny * b.spinY * 4;
     b.spinY *= 0.3;
@@ -1265,7 +1240,7 @@ function evaluateTurn() {
 }
 
 // ============================================================
-// SHOOT (dengan cue stats)
+// SHOOT
 // ============================================================
 function shoot(angle, p, cueStats) {
   const cue = balls[0];
@@ -1279,7 +1254,6 @@ function shoot(angle, p, cueStats) {
   state = 'moving';
   shotState = { firstHit: null, pocketedThisTurn: [], cueBallPocketed: false };
   updateHint();
-  // reset spin untuk shot berikutnya? Simpan sampai bola berhenti
 }
 
 // ============================================================
@@ -1320,7 +1294,7 @@ function botPlaceCueBall() {
     for (const c of candidates) {
       const saveX = cue.x, saveY = cue.y;
       cue.x = c.x; cue.y = c.y;
-      const shots = enumerateShots(2, false);
+      const shots = enumerateShots(2);
       const sc = shots.length > 0 ? shots[0].score : -1000;
       cue.x = saveX; cue.y = saveY;
       if (sc > bestScore) { bestScore = sc; best = c; }
@@ -1401,13 +1375,12 @@ function botExecuteShot() {
 }
 
 function shootBot(angle, power) {
-  // Bot pakai cue stats sendiri (fixed)
   const botCue = { power: 1.05, spin: 1.0, aim: 1.0 };
   shoot(angle, power, botCue);
 }
 
 // ============================================================
-// TRICKSHOT SELECTION
+// TRICKSHOT
 // ============================================================
 function pickTrickShot() {
   const cue = balls[0];
@@ -1430,11 +1403,9 @@ function pickTrickShot() {
   }
   if (targets.length === 0) return null;
 
-  // Cari bank shot (1 cushion dulu) untuk setiap target
   const bankShots = [];
   for (const target of targets) {
     for (const pocket of POCKETS) {
-      // Coba 4 dinding
       const walls = ['top', 'bottom', 'left', 'right'];
       for (const wall of walls) {
         const s = evaluateBankShot(cue, target, pocket, wall);
@@ -1443,13 +1414,11 @@ function pickTrickShot() {
     }
   }
 
-  // Cari combination shot
   const comboShots = [];
   for (const targetA of targets) {
     for (const ballB of balls) {
       if (ballB.isCue || ballB.pocketed || ballB === targetA) continue;
       if (myGroup && ballB.number !== 8) {
-        // Combination hanya kalau ballB bisa jadi perantara legal (biasanya grup sendiri)
         if (!(myGroup === 'solid' ? isSolid(ballB.number) : isStripe(ballB.number))) continue;
       }
       for (const pocket of POCKETS) {
@@ -1462,12 +1431,9 @@ function pickTrickShot() {
   const all = [...bankShots, ...comboShots];
   if (all.length === 0) return null;
 
-  // Sort by score
   all.sort((a, b) => b.shot.score - a.shot.score);
-
-  // Pilih yang terbaik, dengan error tetap diterapkan
   const best = all[0];
-  if (best.shot.score < 20) return null; // terlalu jelek, gak worth it
+  if (best.shot.score < 20) return null;
 
   const cfg = DIFFICULTY[botLevel];
   const angleErr = (Math.random() * 2 - 1) * cfg.angleErr * 1.5;
@@ -1483,21 +1449,18 @@ function pickTrickShot() {
 }
 
 function evaluateBankShot(cue, target, pocket, wall) {
-  // Hitung titik pantul di dinding
   let mirrorTarget = { x: target.x, y: target.y };
   if (wall === 'top')    mirrorTarget.y = TABLE.y * 2 - target.y;
   if (wall === 'bottom') mirrorTarget.y = TABLE_B * 2 - target.y;
   if (wall === 'left')   mirrorTarget.x = TABLE.x * 2 - target.x;
   if (wall === 'right')  mirrorTarget.x = TABLE_R * 2 - target.x;
 
-  // Tentukan titik bounce (intersection dengan dinding)
   const ax = mirrorTarget.x - cue.x;
   const ay = mirrorTarget.y - cue.y;
   const distCG = Math.hypot(ax, ay);
   if (distCG < 1) return null;
   const angle = Math.atan2(ay, ax);
 
-  // Hitung titik bounce untuk cek path blocked
   let bx, by;
   if (wall === 'top') {
     if (ay >= 0) return null;
@@ -1521,19 +1484,16 @@ function evaluateBankShot(cue, target, pocket, wall) {
     bx = TABLE_R; by = cue.y + ay * t;
   }
 
-  // Cek path cue → bounce
   if (pathBlocked(cue.x, cue.y, bx, by, [cue, target])) return null;
-  // Cek path bounce → target
   if (pathBlocked(bx, by, target.x, target.y, [cue, target])) return null;
-  // Cek path target → pocket
   if (pathBlocked(target.x, target.y, pocket.x, pocket.y, [target, cue])) return null;
 
   const distTP = Math.hypot(pocket.x - target.x, pocket.y - target.y);
 
   let score = 60;
   score -= distTP * 0.08;
-  score -= (distCG) * 0.02;
-  score -= 15; // Penalti karena lebih susah
+  score -= distCG * 0.02;
+  score -= 15;
 
   let p = 0.45 + (distCG + distTP) / 1500;
   p = Math.max(0.35, Math.min(1, p));
@@ -1542,11 +1502,9 @@ function evaluateBankShot(cue, target, pocket, wall) {
 }
 
 function evaluateCombination(cue, ballA, ballB, pocket) {
-  // Cue harus hit ballA, ballA harus hit ballB, ballB masuk pocket
   const R = BALL_R;
   const D = 2 * R;
 
-  // Ghost posisi ballA untuk memukul ballB ke pocket
   let dx = pocket.x - ballB.x;
   let dy = pocket.y - ballB.y;
   const distBP = Math.hypot(dx, dy);
@@ -1556,11 +1514,8 @@ function evaluateCombination(cue, ballA, ballB, pocket) {
   const gAx = ballB.x - dx * D;
   const gAy = ballB.y - dy * D;
 
-  // Cek apakah titik ghost A masuk akal (dalam meja)
   if (gAx < TABLE.x || gAx > TABLE_R || gAy < TABLE.y || gAy > TABLE_B) return null;
 
-  // Hitung posisi ballA ketika mengenai ballB (ballA di gA posisi)
-  // Cue perlu hit ballA sehingga ballA bergerak ke arah gA
   const dirAtoB = Math.atan2(gAy - ballA.y, gAx - ballA.x);
   const ghostCueX = ballA.x - Math.cos(dirAtoB) * D;
   const ghostCueY = ballA.y - Math.sin(dirAtoB) * D;
@@ -1573,7 +1528,6 @@ function evaluateCombination(cue, ballA, ballB, pocket) {
   if (distCG < 2) return null;
   const angle = Math.atan2(ay, ax);
 
-  // Cek path
   if (pathBlocked(cue.x, cue.y, ghostCueX, ghostCueY, [cue, ballA, ballB])) return null;
   if (pathBlocked(ballA.x, ballA.y, gAx, gAy, [ballA, ballB, cue])) return null;
   if (pathBlocked(ballB.x, ballB.y, pocket.x, pocket.y, [ballB, ballA, cue])) return null;
@@ -1581,7 +1535,7 @@ function evaluateCombination(cue, ballA, ballB, pocket) {
   let score = 50;
   score -= distBP * 0.08;
   score -= distCG * 0.05;
-  score -= 20; // Penalti karena kombinasi susah
+  score -= 20;
 
   let p = 0.5 + (distBP + distCG) / 1200;
   p = Math.max(0.4, Math.min(1, p));
@@ -1622,7 +1576,7 @@ function fallbackShot() {
 }
 
 function pickBotShot() {
-  const shots = enumerateShots(1, true);
+  const shots = enumerateShots(1);
   if (shots.length === 0) return null;
 
   const cfg = DIFFICULTY[botLevel];
@@ -1643,7 +1597,7 @@ function pickBotShot() {
   };
 }
 
-function enumerateShots(limit, forBot) {
+function enumerateShots(limit) {
   const cue = balls[0];
   if (cue.pocketed) return [];
 
@@ -1988,12 +1942,10 @@ function drawCueStick(cx, cy, angle, power, alpha = 1, cueData = null, isBot = f
   ctx.lineCap = 'round';
   ctx.stroke();
 
-  // Gunakan warna cue
   const c1 = stats.colors ? stats.colors[0] : '#f7ecd0';
   const c2 = stats.colors ? stats.colors[1] : '#2a1608';
   const g = ctx.createLinearGradient(sx, sy, ex, ey);
   if (isBot) {
-    // Bot cue = silver/cyan
     g.addColorStop(0, '#c8e8f0');
     g.addColorStop(0.15, '#80c8d8');
     g.addColorStop(0.7, '#3a5a68');
@@ -2012,7 +1964,6 @@ function drawCueStick(cx, cy, angle, power, alpha = 1, cueData = null, isBot = f
   ctx.lineWidth = 6.5;
   ctx.stroke();
 
-  // Glow untuk cue langka
   if (!isBot && stats.rarity && (stats.rarity === 'legendary' || stats.rarity === 'mythic')) {
     ctx.beginPath();
     ctx.moveTo(sx, sy);
@@ -2122,7 +2073,6 @@ function update() {
   if (state === 'moving') {
     updatePhysics();
     if (allStopped()) {
-      // Reset spin cue ball setelah berhenti
       const cue = balls[0];
       cue.spinX = 0; cue.spinY = 0;
       spinX = 0; spinY = 0;
